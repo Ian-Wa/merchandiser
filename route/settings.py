@@ -93,7 +93,7 @@ TEMPLATES = [
 
 
 
-WSGI_APPLICATION = 'awards.wsgi.application'
+WSGI_APPLICATION = 'route.wsgi.application'
 
 
 # Database
