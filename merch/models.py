@@ -1,35 +1,51 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from cloudinary.models import CloudinaryField
-from django.forms import CharField
+from django.contrib.auth.models import User
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
-# Create your models here.
-class Merchandizer(models.Model):
-    merchandizerId = models.AutoField(primary_key= True)
-    userName = models.CharField(max_length=50)
-    firstName = models.CharField(max_length= 50)
-    lastName = models.CharField(max_length=50)
-    emailAddress = models.EmailField(max_length= 100)
-    idNo = models.IntegerField()
+class User(AbstractUser):
+
+    class Types(models.TextChoices):
+        EMPLOYEE = 'EMPLOYEE', 'Employee'
+        PLANNER = 'PLANNER', 'Planner'
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    type = models.CharField(_('Type'), max_length=50, choices=Types.choices, default=Types.EMPLOYEE)
+    is_merchandizer = models.BooleanField(default=False)
+    is_manager = models.BooleanField(default=False)
     profile_pic = CloudinaryField('images')
     createdAtDate = models.DateTimeField(auto_now_add=True)
+    
+    def get_absolute_url(self):
+        return reverse('users:detail', kwargs={'username': self.username})
 
-    def __str__(self):
-        return self.userName
+class EmployeeManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset(*args, **kwargs).filter(type=User.Types.EMPLOYEE)
 
-class Manager(models.Model):
-    managerId = models.AutoField(primary_key= True)
-    userName = models.CharField(max_length=50)
-    firstName = models.CharField(max_length= 50)
-    lastName = models.CharField(max_length=50)
-    routes = models.TextField(max_length=150)
-    profile_pic = CloudinaryField('images')
+class PlannerManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset(*args, **kwargs).filter(type=User.Types.PLANNER)
 
-    def __str__(self):
-        return self.userName
+class Employee(User):
+    objects = EmployeeManager()
+    class Meta:
+        proxy = True
 
-class Route(models.Model):
-    routeId = models.AutoField(primary_key=True)
-    route = CharField(max_length=80)
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.type = User.Types.EMPLOYEE
+        return super().save(*args, **kwargs)
 
-    def __str__(self):
-        return self.use
+class Planner(User):
+    objects = PlannerManager()
+    class Meta:
+        proxy = True
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.type = User.Types.PLANNER
+        return super().save(*args, **kwargs)
+

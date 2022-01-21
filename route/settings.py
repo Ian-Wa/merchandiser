@@ -16,7 +16,9 @@ import cloudinary.uploader
 import cloudinary.api
 import dj_database_url
 from decouple import config
+from django.template import Engine
 import django_heroku
+from datetime import timedelta
 
 
 
@@ -55,6 +57,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'merch',
+    'accounts',
+    'routes',
     'bootstrap4',
     'cloudinary',
     'rest_framework',
@@ -64,10 +68,21 @@ INSTALLED_APPS = [
 CORS_ORIGIN_ALLOW_ALL = True
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ]
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.isAuthenticated'
+        
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    
 }
 
 
@@ -114,13 +129,21 @@ WSGI_APPLICATION = 'route.wsgi.application'
 
 if config('MODE')=="dev":
    DATABASES = {
-       'default': {
+       'default': {},
+       'routes_users': {
            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-           'NAME': config('DB_NAME'),
+           'NAME': config('DB_NAME1'),
            'USER': config('DB_USER'),
            'PASSWORD': config('DB_PASSWORD'),
            'PORT': '',
-       }
+       },
+       'routes': {
+           'ENGINE': 'django.db.backends.postgresql_psycopg2',
+           'NAME': config('DB_NAME2'),
+           'USER': config('DB_USER'),
+           'PASSWORD': config('DB_PASSWORD'),
+           'PORT': '',
+       },
        
    }
 # production
@@ -186,6 +209,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGOUT_REDIRECT_URL = '/'
 
-
+AUTH_USER_MODEL = 'merch.User'
 
 django_heroku.settings(locals())
