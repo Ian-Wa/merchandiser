@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'merch',
     'accounts',
     'routes',
     'bootstrap4',
@@ -101,7 +100,7 @@ MIDDLEWARE = [
 
 SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
 
-ROOT_URLCONF = 'merch.urls'
+ROOT_URLCONF = 'route.urls'
 
 TEMPLATES = [
     {

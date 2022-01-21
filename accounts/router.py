@@ -1,6 +1,6 @@
 class AuthRouter:
     # Name of application used as route app label
-    route_app_labels = {'accounts'}
+    route_app_labels = {'accounts', 'admin', 'contenttypes', 'sessions',}
 
     def db_for_read(self, model, **hints):
         """
