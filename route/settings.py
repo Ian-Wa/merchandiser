@@ -69,7 +69,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.isAuthenticated'
+        'rest_framework.permissions.IsAuthenticated'
         
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -157,6 +157,7 @@ else:
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
+DATABASE_ROUTERS = ['accounts.router.AuthRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -209,6 +210,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGOUT_REDIRECT_URL = '/'
 
-AUTH_USER_MODEL = 'merch.User'
+AUTH_USER_MODEL = 'accounts.UserAccount'
 
 django_heroku.settings(locals())
