@@ -66,7 +66,7 @@ class RegisterView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-class RetriveUserView(APIView):
+class RetrieveUserView(APIView):
     def get(self, request, format=None):
         try:
             user = request.user
