@@ -5,7 +5,11 @@ from .serializers import UserSerializer
 from rest_framework.views import APIView
 from rest_framework import permissions, status
 from rest_framework.response import Response
+from django.shortcuts import render
 # Create your views here.
+
+def index(request):
+    return render(request, 'index.html')
 class RegisterView(APIView):
     permission_classes = (permissions.AllowAny,)
 
